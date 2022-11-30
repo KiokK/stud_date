@@ -18,10 +18,10 @@ public class Group {
 //    private Timetable timetable = null;
 
     //одной группе множество студентов
-    @OneToMany( cascade=CascadeType.MERGE, fetch = FetchType.LAZY)//каждый раз при получении группы получаем и информацию о студенте
+    @OneToMany( cascade=CascadeType.MERGE, fetch = FetchType.EAGER)//каждый раз при получении группы получаем и информацию о студенте
     private List<Student> studentList;
 
-    @OneToMany( cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany( cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Lesson> lessons;
 
     public Group(String groupNumber) {
@@ -62,5 +62,9 @@ public class Group {
 
     public void setLessons(Set<Lesson> lessons) {
         this.lessons = lessons;
+    }
+
+    public void addLesson(Lesson lesson) {
+        this.lessons.add(lesson);
     }
 }

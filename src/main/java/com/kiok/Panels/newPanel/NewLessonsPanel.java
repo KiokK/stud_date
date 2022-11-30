@@ -1,430 +1,299 @@
 package com.kiok.Panels.newPanel;
 //import com.kiok.DB.DataBase;
-import com.kiok.MainApp;
+import com.kiok.Models.Group;
+import com.kiok.Models.Lesson;
 import com.kiok.service.GroupService;
 import com.kiok.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.*;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.annotation.PostConstruct;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.CaretEvent;
+import javax.swing.*;
 import javax.swing.event.CaretListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.PlainDocument;
 
 @Component
-public class NewLessonsPanel extends JPanel implements CaretListener, ActionListener, ListSelectionListener{
+public class NewLessonsPanel extends JPanel implements ActionListener, ListSelectionListener{
 
 
     private static final long serialVersionUID = 2L;
 
-    @Autowired
+    //@Autowired
     private GroupService groupService;// = MainApp.ctx.getBean(GroupService.class);
 
     @Autowired
     private LessonService lessonService;
 
     /**
-     * x position of the List box
+     * x, y position of the List box
      */
-    private final int LBX = 85;
+    private final int LBX = 185, LBY = 60;
 
     /**
-     * y position of the List box
+     * width, height, space of the list box
      */
-    private final int LBY = 90;
+    private final int LBW = 230, LBH = 160, LBS = 400;
 
     /**
-     * width of the List box
+     * width and height button
      */
-    private final int LBW = 200;
-
-    /**
-     * height of the list box
-     */
-    private final int LBH = 130;
-
-    /**
-     * space of the list box
-     */
-    private final int LBS = 400;
-
-    /**
-     * height of the search box
-     */
-    private final int SBH = 30;
-
-    /**
-     * width of the search box
-     */
-    private final int SBW = 200;
-
-    /**
-     * width of button
-     */
-    private final int BW = 120;
-
-    /**
-     * height of button
-     */
-    private final int BH = 30;
+    private final int BW = 120, BH = 30;
 
     /**
      * space of button
      */
     private final int BS = 70;
 
-    /**
-     * count text
-     */
-    private final String countText = "Selected : ";
 
-    private JList<String> selectionBox_list, selectedBox_list;
-    private DefaultListModel<String> selection_model, selected_model, data_model;
-    private JTextField selectionSearchBox_text, selectedSearchBox_text, dateBox_text;
-    private JScrollPane selection_scroll, selected_scroll, note_scroll;
-    private JButton add_button, remove_button, save_button;
+    private JList<String> selectionBox_list;
+    private DefaultListModel<String> selection_model;
+    private JTextField lessonName_text, teacherName_text;
+    private JTextField numberTime_text;
+    private JScrollPane selection_scroll;
+    private JButton info_button, remove_button, save_button;
 
-    private JLabel selectionBox_label, selectedBox_label, countText_label, group_label;
-    private JLabel dateBox_label, todayCheckBox_label, selectionGroup_label, selectedGroup_label;
-    private JLabel selectionDate_label, selectedDate_label, note_label, noteRemainderCharacter_label;
+    private JRadioButton lk_rbt, pr_rbt, lr_rbt, sem_rbt, zach_rbt, dif_rbt, ekz_rbt;
 
-    private ArrayList<String[]> workerData_arrayList;
+    private ButtonGroup buttonGroup_typeOfClass, buttonGroup_typeOfExam;
+
+    private JLabel selectionBox_label, group_label, lessonName_label, teacherName_label;
+    private JLabel selectionGroup_label, selectedGroup_label;
+    private JLabel numberTime_label;
+
     private ArrayList<String> groupNumbers_arrayList;
 
-    private JTextArea note_textArea;
-    private String logNote;
-    private JCheckBox today_checkBox;
     private JComboBox<String> group_comboBox;
     private DefaultComboBoxModel<String> group_model;
 
-    @PostConstruct
-    private void init() {
-       // groupService = MainApp.ctx.getBean(GroupService.class);
-        groupNumbers_arrayList = groupService.findAllNumbers();
-    }
-    public NewLessonsPanel() {
+    private Set<Lesson> lessons_arr;
+    private Group thisGroup;
+
+    /**
+     * Конструктор создания объекта панели и графического интерфейса
+     * @param groupService внедряется из ApplicationContext при срабатывании конструктора
+     */
+    @Autowired
+    public NewLessonsPanel(GroupService groupService) {
+        this.groupService = groupService;
 
         setLayout(null);
 
-        workerData_arrayList = new ArrayList<>();//DataBase.getData("worker");
-        groupNumbers_arrayList = new ArrayList<>();//groupService.findAllNumbers();//DataBase.getData("employer");
+        groupNumbers_arrayList = groupService.findAllNumbers();
+        selection_model = new DefaultListModel<>();
+      //  group_model = new DefaultComboBoxModel<>();
 
-        System.out.println("=---------------------\n\n" + MainApp.ctx+ "\n\n");
-        //groupNumbers_arrayList = groupService.findAllNumbers();
-      //  try{
-        init();
-           // groupService = (GroupService) MainApp.ctx.getBean(GroupService.class);
-           // groupNumbers_arrayList = groupService.findAllNumbers();
-//        }catch (NullPointerException e){
-//            System.out.println("groupService == null\n\n\n");
-//        }
+        //for(int i = 0; i < groupNumbers_arrayList.size(); i++)
+        //    group_model.addElement(groupNumbers_arrayList.get(i));
 
-        data_model = new DefaultListModel<>();
-        for(int i = 0; i < workerData_arrayList.size(); i++)
-            data_model.addElement(workerData_arrayList.get(i)[1] + " " + workerData_arrayList.get(i)[2]);
-
-        selection_model = data_model;
-
-        group_model = new DefaultComboBoxModel<>();
-        for(int i = 0; i < groupNumbers_arrayList.size(); i++)
-            group_model.addElement(groupNumbers_arrayList.get(i));
-
-        selected_model = new DefaultListModel<String>();
-
-        selectionBox_list = new JList<String>(selection_model);
+        selectionBox_list = new JList<String>();
         selectionBox_list.setFixedCellHeight(24);
         selectionBox_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionBox_list.addListSelectionListener(this);
-
-
-        selectedBox_list = new JList<String>(selected_model);
-        selectedBox_list.setFixedCellHeight(24);
-        selectedBox_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        selectedBox_list.addListSelectionListener(this);
 
         selection_scroll = new JScrollPane(selectionBox_list);
         selection_scroll.setBounds(LBX, LBY, LBW, LBH);
         add(selection_scroll);
 
-        selected_scroll = new JScrollPane(selectedBox_list);
-        selected_scroll.setBounds(selection_scroll.getX() + LBS + LBW, selection_scroll.getY(), LBW, LBH);
-        add(selected_scroll);
-
-        selectionBox_label = new JLabel("Worker List");
-        selectionBox_label.setBounds(LBX + (LBW - 50) / 2, LBY - SBH - 50, LBW, 50);
+        selectionBox_label = new JLabel("Список предметов");
+        selectionBox_label.setBounds(LBX + (LBW - 100) / 2, LBY - BH - 30, LBW, 50);
         add(selectionBox_label);
 
-        selectedBox_label = new JLabel("Selected List");
-        selectedBox_label.setBounds(LBX + LBW + LBS + (LBW - 100) / 2, selectionBox_label.getY(), LBW, 50);
-        add(selectedBox_label);
-
-        countText_label = new JLabel(countText + selected_model.getSize());
-        countText_label.setBounds(LBX + LBW + LBS, LBY + LBH - 5, LBW, BH);
-        add(countText_label);
-
         group_label = new JLabel("Выбрать группу");
-        group_label.setBounds(LBX, LBY + LBH + 70, LBW, 24);
+        group_label.setBounds(LBX, LBY + LBH + 25, LBW, 24);
         add(group_label);
 
-        selectionGroup_label = new JLabel("Выбранная группа");
-        selectionGroup_label.setBounds(group_label.getX() + LBW + LBS, group_label.getY(), LBW, 24);
-        add(selectionGroup_label);
-
-        group_comboBox = new JComboBox<String>(group_model);
+        //comboBox для выбора группы
+        group_comboBox = new JComboBox<String>(groupNumbers_arrayList.toArray(new String[groupNumbers_arrayList.size()]));
         group_comboBox.setSelectedItem(null);
         group_comboBox.setBounds(LBX, group_label.getY() + group_label.getHeight(), LBW, 24);
         group_comboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectedGroup_label.setText((String) group_comboBox.getSelectedItem());
+                ArrayList<String> data_model = new ArrayList<>();
+                if (group_comboBox.getSelectedItem() != null) {
+                    thisGroup = groupService.findByGroupNumber((String) group_comboBox.getSelectedItem());
+                    lessons_arr = thisGroup.getLessons();
+                    for (Lesson el : lessons_arr)
+                        data_model.add(el.getLessonName()+" ("+el.getTypeOfLesson()+")");
+
+                    selectionBox_list.setListData(data_model.toArray(new String[data_model.size()]));
+                }
             }
         });
         add(group_comboBox);
 
+        //выбранная группа
+        selectionGroup_label = new JLabel("Выбранная группа");
+        selectionGroup_label.setBounds(group_label.getX() + LBS, group_label.getY(), LBW, 24);
+        add(selectionGroup_label);
+
         selectedGroup_label = new JLabel((String) group_comboBox.getSelectedItem());
         selectedGroup_label.setFont(new Font(Font.SANS_SERIF, Font.BOLD + Font.ITALIC, 16));
         selectedGroup_label.setForeground(Color.gray);
-        selectedGroup_label.setBounds(group_comboBox.getX() + LBW + LBS, group_comboBox.getY(), LBW, 24);
+        selectedGroup_label.setBounds(group_comboBox.getX() + LBS, group_comboBox.getY(), LBW, 24);
         add(selectedGroup_label);
 
-        dateBox_label = new JLabel("Choose date (YYYY-MM-DD)");
-        dateBox_label.setBounds(LBX, group_comboBox.getY() + group_comboBox.getHeight() + 50, LBW, 24);
-        add(dateBox_label);
+        //Кнопка доп. информации о предмете
+        info_button = new JButton("Инфо");
+        info_button.setFocusPainted(false);
+        info_button.setEnabled(false);
+        info_button.setBackground(Color.gray);
+        info_button.setBounds(LBX + LBW + (LBS - BW) / 2, LBY + (LBH - 4 * BH) / 2, BW, BH);
+        info_button.addActionListener(this);
+        add(info_button);
 
-        selectionDate_label = new JLabel("Selected date");
-        selectionDate_label.setBounds(dateBox_label.getX() + LBW + LBS, dateBox_label.getY(), LBW, 24);
-        add(selectionDate_label);
-
-        dateBox_text = new JTextField();
-        dateBox_text.setDocument(new PlainDocument());
-        dateBox_text.setBounds(dateBox_label.getX(), dateBox_label.getY() + dateBox_label.getHeight(), LBW, 24);
-        dateBox_text.addCaretListener(new CaretListener() {
-            @Override
-            public void caretUpdate(CaretEvent e) {
-                selectedDate_label.setText(dateBox_text.getText());
-            }
-        });
-        add(dateBox_text);
-
-        selectedDate_label = new JLabel(dateBox_text.getText());
-        selectedDate_label.setBounds(dateBox_text.getX() + LBW + LBS, dateBox_text.getY(), LBW, 24);
-        selectedDate_label.setFont(selectedGroup_label.getFont());
-        selectedDate_label.setForeground(Color.gray);
-        add(selectedDate_label);
-
-        today_checkBox = new JCheckBox();
-        today_checkBox.setBounds(dateBox_text.getX(), dateBox_text.getY() + dateBox_text.getHeight(), 18, 18);
-        today_checkBox.addItemListener(new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() == ItemEvent.DESELECTED)
-                    dateBox_text.setText("");
-                else if(e.getStateChange() == ItemEvent.SELECTED)
-                    dateBox_text.setText("" + LocalDate.now());
-            }
-        });
-        add(today_checkBox);
-
-        todayCheckBox_label = new JLabel("Today");
-        todayCheckBox_label.setBounds(today_checkBox.getX() + today_checkBox.getWidth() + 5,
-                today_checkBox.getY(), LBW - today_checkBox.getWidth(), 18);
-        add(todayCheckBox_label);
-
-        note_label = new JLabel("NOTE");
-        note_label.setBounds(dateBox_label.getX(), dateBox_label.getY() + 80, LBW, 24);
-        add(note_label);
-
-        note_textArea = new JTextArea();
-        note_textArea.setBounds(0, 0, LBS, 60);
-        note_textArea.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if(note_textArea.getText().length() < 256) {
-                    logNote = note_textArea.getText();
-                    noteRemainderCharacter_label.setText("Limited to 255 characters (Remainder : " + (255 - logNote.length()) + " )");
-                    noteRemainderCharacter_label.setForeground(new Color(0, 190, 0));
-                } else {
-                    note_textArea.setText(logNote);
-                    noteRemainderCharacter_label.setForeground(new Color(190, 0, 0));
-                }
-            }
-        });
-
-        note_scroll = new JScrollPane(note_textArea);
-        note_scroll.setBounds(note_label.getX(), note_label.getY() + note_label.getHeight(), LBS, 60);
-        add(note_scroll);
-
-        noteRemainderCharacter_label = new JLabel("Limited to 255 characters (Remainder : )");
-        noteRemainderCharacter_label.setFont(new Font(Font.DIALOG, Font.ITALIC, 9));
-        noteRemainderCharacter_label.setForeground(new Color(0, 190, 0));
-        noteRemainderCharacter_label.setBounds(note_scroll.getX(), note_scroll.getY() + note_scroll.getHeight(), LBW, 24);
-        add(noteRemainderCharacter_label);
-
-        add_button = new JButton("Add");
-        add_button.setFocusPainted(false);
-        add_button.setEnabled(false);
-        add_button.setBackground(Color.gray);
-        add_button.setBounds(LBX + LBW + (LBS - BW) / 2, LBY + (LBH - 4 * BH) / 2, BW, BH);
-        add_button.addActionListener(this);
-        add(add_button);
-
-        remove_button = new JButton("Remove");
+        //Кнопка для удаления предмета
+        remove_button = new JButton("Удалить");
         remove_button.setFocusPainted(false);
         remove_button.setEnabled(false);
         remove_button.setBackground(Color.gray);
-        remove_button.setBounds(LBX + LBW + (LBS - BW) / 2, add_button.getY() + BS, BW, BH);
+        remove_button.setBounds(LBX + LBW + (LBS - BW) / 2, info_button.getY() + BS, BW, BH);
         remove_button.addActionListener(this);
         add(remove_button);
 
-        selectionSearchBox_text = new JTextField();
-        selectionSearchBox_text.setBounds(LBX, LBY - SBH, SBW, SBH);
-        selectionSearchBox_text.addCaretListener(this);
-        add(selectionSearchBox_text);
+        JLabel newLesson_label = new JLabel("___________________________Новый предмет___________________________");
+        newLesson_label.setFont(selectedGroup_label.getFont());
+        newLesson_label.setBounds(group_comboBox.getX(), group_comboBox.getY() + 60,
+                650, BH);
+        add(newLesson_label);
 
-        selectedSearchBox_text = new JTextField();
-        selectedSearchBox_text.setBounds(LBX + LBW + LBS, LBY - SBH, SBW, SBH);
-        selectedSearchBox_text.addCaretListener(this);
-        add(selectedSearchBox_text);
+        //создание подписи поля для ввода названия предмета
+        lessonName_label = new JLabel("Название");
+        lessonName_label.setBounds(group_comboBox.getX(), newLesson_label.getY() + 60, 150, BH);
+        add(lessonName_label);
+        //создание поля для ввода названия предмета
+        lessonName_text = new JTextField();
+        lessonName_text.setBounds(lessonName_label.getX() + lessonName_label.getWidth(),
+                newLesson_label.getY() + 60, 120, BH);
+        add(lessonName_text);
 
-        save_button = new JButton("SAVE");
-        save_button.setBounds(note_scroll.getX() + LBW + LBS, note_scroll.getY(), LBW, note_scroll.getHeight() - 10);
+        //создание подписи поля для ввода имени преподавателя
+        teacherName_label = new JLabel("Преподаватель");
+        teacherName_label.setBounds(group_comboBox.getX(), lessonName_text.getY() + 50,
+                lessonName_label.getWidth(), BH);
+        add(teacherName_label);
+        //создание поля для ввода преподавателя
+        teacherName_text = new JTextField();
+        teacherName_text.setBounds(lessonName_label.getX() + lessonName_label.getWidth(),
+                lessonName_text.getY() + 50, 120, BH);
+        add(teacherName_text);
+
+        //создание подписи поля для ввода
+        numberTime_label = new JLabel("Кол. часов");
+        numberTime_label.setBounds(group_comboBox.getX(), teacherName_text.getY() + 50,
+                lessonName_label.getWidth(), BH);
+        add(numberTime_label);
+        //создание поля для ввода
+        numberTime_text = new JTextField();
+        numberTime_text.setBounds(lessonName_label.getX() + lessonName_label.getWidth(),
+                teacherName_text.getY() + 50, 120, BH);
+        add(numberTime_text);
+
+        //Создание выбора типа занятия
+        lk_rbt = new JRadioButton("ЛК.");
+        lk_rbt.setBounds(lessonName_text.getX() + lessonName_text.getWidth() + 50,
+                newLesson_label.getY() + 60, 60, BH);
+        lk_rbt.setSelected(true);
+        pr_rbt = new JRadioButton("ПР.");
+        pr_rbt.setBounds(lk_rbt.getX() + lk_rbt.getWidth() + 10,
+                newLesson_label.getY() + 60, 60, BH);
+        lr_rbt = new JRadioButton("ЛР.");
+        lr_rbt.setBounds(pr_rbt.getX() + pr_rbt.getWidth() + 10,
+                newLesson_label.getY() + 60, 60, BH);
+        sem_rbt = new JRadioButton("СЕМ.");
+        sem_rbt.setBounds(lr_rbt.getX() + lr_rbt.getWidth() + 10,
+                newLesson_label.getY() + 60, 60, BH);
+        buttonGroup_typeOfClass = new ButtonGroup();
+        buttonGroup_typeOfClass.add(lk_rbt);
+        buttonGroup_typeOfClass.add(pr_rbt);
+        buttonGroup_typeOfClass.add(lr_rbt);
+        buttonGroup_typeOfClass.add(sem_rbt);
+        add(lk_rbt); add(pr_rbt);
+        add(lr_rbt); add(sem_rbt);
+
+        //Создание выбора типа экзаменации оценки
+        zach_rbt = new JRadioButton("зач.");
+        zach_rbt.setBounds(lessonName_text.getX() + lessonName_text.getWidth() + 50,
+                newLesson_label.getY() + 90, 60, BH);
+        zach_rbt.setSelected(true);
+        dif_rbt = new JRadioButton("диф.");
+        dif_rbt.setBounds(lk_rbt.getX() + lk_rbt.getWidth() + 10,
+                newLesson_label.getY() + 90, 60, BH);
+        ekz_rbt = new JRadioButton("экз.");
+        ekz_rbt.setBounds(pr_rbt.getX() + pr_rbt.getWidth() + 10,
+                newLesson_label.getY() + 90, 60, BH);
+        buttonGroup_typeOfExam = new ButtonGroup();
+        buttonGroup_typeOfExam.add(zach_rbt);
+        buttonGroup_typeOfExam.add(dif_rbt);
+        buttonGroup_typeOfExam.add(ekz_rbt);
+        add(zach_rbt); add(dif_rbt);
+        add(ekz_rbt);
+
+        //Кнопка для добавления нового урока
+        save_button = new JButton("Добавить");
+        save_button.setBounds(pr_rbt.getX(),
+                newLesson_label.getY() + 150, 170, BH);
         save_button.setFocusPainted(false);
         save_button.setBackground(Color.CYAN);
         save_button.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean date_bool = false;
 
-                try {
-                    new SimpleDateFormat("yyyy-MM-dd").parse(dateBox_text.getText());
-                    date_bool = true;
-                } catch (ParseException e1) {
+                //проверка на заполненность полей нового урока
+                if(	lessonName_text.getText().equals("") ||
+                    teacherName_text.getText().equals("") ||
+                    numberTime_text.getText().equals("") ||
+                    group_comboBox.getSelectedItem() == null) {
 
-                }
-
-                if(selected_model.getSize() > 0 && group_comboBox.getSelectedItem() != null) {
-
-                    JTextArea employer_text_t, worker_text_t, date_text_t, count_text_t, note_text_t;
-                    String worker_s = "";
-                    for(int i = 0; i < selected_model.getSize(); i++) {
-                        worker_s += (i + 1) + " - " + selected_model.getElementAt(i) + "\n";
-                    }
-
-                    employer_text_t = new JTextArea((String) group_comboBox.getSelectedItem());
-                    employer_text_t.setEditable(false);
-
-                    worker_text_t = new JTextArea(worker_s);
-                    worker_text_t.setEditable(false);
-
-                    date_text_t = new JTextArea(dateBox_text.getText());
-                    date_text_t.setEditable(false);
-
-                    count_text_t = new JTextArea(selected_model.getSize() + " Workers");
-                    count_text_t.setEditable(false);
-
-                    note_text_t = new JTextArea(note_textArea.getText());
-                    note_text_t.setEditable(false);
-
-                    JScrollPane worker_j = new JScrollPane(worker_text_t) {
-
-                        @Override
-                        public Dimension getPreferredSize() {
-                            return new Dimension(300, 200);
-                        }
-
-                    };
-
-                    JScrollPane note_j = new JScrollPane(note_text_t) {
-                        @Override
-                        public Dimension getPreferredSize() {
-                            return new Dimension(300, 100);
-                        }
-                    };
-
-
-                    if(date_bool) {
-
-                        Object[] pane = {
-                                new JLabel("Employer"),
-                                employer_text_t,
-                                new JLabel("Workers"),
-                                worker_j,
-                                new JLabel("Date"),
-                                date_text_t,
-                                new JLabel("Selected workers"),
-                                count_text_t,
-                                new JLabel("Note"),
-                                note_j
-                        };
-
-                        int result = JOptionPane.showOptionDialog(NewLessonsPanel.this, pane, "DOCUMENT", 1, 1,
-                                new ImageIcon("src\\icons\\accounting_icon_1_32.png"), new Object[] {"SAVE", "CANCEL"}, "CANCEL");
-
-                        if(result == 0) {
-
-                            String worker_array[] = new String[selected_model.getSize()];
-                            for(int i = worker_array.length - 1; i >= 0; i--) {
-                                worker_array[i] = getPersonId(workerData_arrayList, selected_model.get(i));
-                            }
-
-                            int state = 0;//DataBase.addRecord(getPersonId(groupNumbers_arrayList, employer_text_t.getText()),
-                                    //date_text_t.getText(), worker_array, note_text_t.getText());
-
-                            if( state == 1) {
-                                JOptionPane.showMessageDialog(NewLessonsPanel.this, "SAVED", "SUCCESSFUL", JOptionPane.INFORMATION_MESSAGE);
-                                clearPanel();
-
-                            } else {
-
-                                JOptionPane.showMessageDialog(NewLessonsPanel.this, ( "NOT SAVED" + (state == 0 ? "" : ("only " + state + " added")) + "\nUnsaved, in selected box" ), "DATABASE ERROR", JOptionPane.ERROR_MESSAGE);
-
-                            }
-
-                        }
-
-                    } else {
-
-                        JOptionPane.showMessageDialog(NewLessonsPanel.this, "Please check the date field", "DATE", JOptionPane.ERROR_MESSAGE);
-
-                    }
+                    JOptionPane.showMessageDialog(null,
+                            "Пожалуйста введите информацию корректно\nполя не могут быть пустыми\n Не забудьте выбрать группу", "ОШИБКА", JOptionPane.ERROR_MESSAGE);
 
                 } else {
-                    JOptionPane.showMessageDialog(NewLessonsPanel.this, "Please fill in the blanks", "NULL", JOptionPane.ERROR_MESSAGE);
+                    String text = "\n  Назв. предмета :\t" + lessonName_text.getText().toUpperCase() + "\n\n" +
+                            "  Преподаватель : \t" + teacherName_text.getText().toUpperCase() + "\n\n" +
+                            "  Количество часов : \t" + numberTime_text.getText().toUpperCase() + "\n\n" +
+                            "  № группы : \t\t" + group_comboBox.getSelectedItem() + "\n\n" +
+                            "  Тип аттестации : \t" + getSelectedButtonText(buttonGroup_typeOfExam) + "\n\n" +
+                            "  Тип занятия : \t\t" + getSelectedButtonText(buttonGroup_typeOfClass) + "\n\n";
+                    Object[] pane = {
+                            new JLabel("Предмет будет сохранен"),
+                            new JTextArea(text) {
+                                public boolean isEditable() {
+                                    return false;
+                                };
+                            }
+
+                    };
+
+                    //окно перепроверки перед сохранением
+                    int result = JOptionPane.showOptionDialog(null, pane, "Данные", 1, 1,
+                            new ImageIcon("src\\icons\\accounting_icon_1_32.png"), new Object[] {"Сохранить", "Закрыть"}, "Закрыть");
+
+                    if(result == 0) { // 0 -> SAVE
+                        Lesson saveLesson = lessonService.save(new Lesson(lessonName_text.getText(), teacherName_text.getText(),
+                                getSelectedButtonText(buttonGroup_typeOfExam),
+                                numberTime_text.getText(), getSelectedButtonText(buttonGroup_typeOfClass),
+                                thisGroup));
+                        thisGroup.addLesson(saveLesson);
+                        groupService.save(thisGroup);
+                        if(saveLesson != null) {
+
+                            JOptionPane.showMessageDialog(null, "Сохранено");
+                            clearPanel();
+                        } else {
+
+                            JOptionPane.showMessageDialog(null, "Не сохранено", "DATABASE ERROR", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+
                 }
 
             }
@@ -433,133 +302,90 @@ public class NewLessonsPanel extends JPanel implements CaretListener, ActionList
 
     }
 
+    /**
+     * Метод возвращает название выбранной radioButton из группы
+     * @param buttonGroup
+     * @return название выбранного поля в формате <code>String</code>
+     */
+    private String getSelectedButtonText(ButtonGroup buttonGroup) {
+        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
 
-    public DefaultListModel<String> searchBoxSort(JTextField t){
-
-        DefaultListModel<String> model = null, newModel = new DefaultListModel<String>();
-        String text;
-
-        if(t == selectionSearchBox_text)
-            model = selection_model;
-        else if(t == selectedSearchBox_text)
-            model = selected_model;
-
-        if(!t.getText().equals("")) {
-
-            if(model != null) {
-
-                text = t.getText().toUpperCase();
-
-                for(int i = 0; i < model.getSize(); i++) {
-
-                    if( ((String)model.get(i)).contains(text)) {
-                        newModel.addElement(model.get(i));
-                    }
-
-                }
-
-            }
-
-        } else {
-            newModel = model;
-        }
-
-        return newModel;
-
-    }
-
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == add_button && selectionBox_list.getSelectedValue() != null) {
-
-            String text = (String) selectionBox_list.getSelectedValue();
-            selection_model.removeElement(text);
-            selected_model.addElement(text);
-            selectionSearchBox_text.setText("");
-            add_button.setBackground(Color.gray);
-            add_button.setEnabled(false);
-
-        } else if(e.getSource() == remove_button && selectedBox_list.getSelectedValue() != null) {
-
-            String text = (String) selectedBox_list.getSelectedValue();
-            selected_model.removeElement(text);
-            selection_model.addElement(text);
-            selectedSearchBox_text.setText("");
-            remove_button.setBackground(Color.gray);
-            remove_button.setEnabled(false);
-
-        }
-
-        countText_label.setText(countText + selected_model.getSize());
-
-    }
-
-
-    @Override
-    public void caretUpdate(CaretEvent e) {
-
-        if(e.getSource() == selectionSearchBox_text) {
-            selectionBox_list.setModel(searchBoxSort(selectionSearchBox_text));
-        } else if(e.getSource() == selectedSearchBox_text) {
-            selectedBox_list.setModel(searchBoxSort(selectedSearchBox_text));
-        }
-
-    }
-
-
-    @Override
-    public void valueChanged(ListSelectionEvent e) {
-
-        if(e.getSource() == selectionBox_list && selectionBox_list.getSelectedValue() != null){//selectionBox_list.getModel().getSize() != 0) {
-
-            remove_button.setBackground(Color.gray);
-            remove_button.setEnabled(false);
-            add_button.setBackground(Color.green);
-            add_button.setEnabled(true);
-            selectedBox_list.clearSelection();
-            selectedSearchBox_text.setText("");
-
-        } else if(e.getSource() == selectedBox_list && selectedBox_list.getSelectedValue() != null){ //&& selectedBox_list.getModel().getSize() != 0) {
-
-            add_button.setBackground(Color.gray);
-            add_button.setEnabled(false);
-            remove_button.setBackground(Color.red);
-            remove_button.setEnabled(true);
-            selectionBox_list.clearSelection();
-            selectionSearchBox_text.setText("");
-
-        }
-
-    }
-
-
-    private String getPersonId(ArrayList<String[]> arrayList, String nameSurname) {
-
-        for(String[] person : arrayList) {
-            if(nameSurname.equalsIgnoreCase(person[1] + " " + person[2])){
-                return person[0];
+            if (button.isSelected()) {
+                return button.getText();
             }
         }
 
         return null;
-
     }
 
 
-    private void clearPanel() {
+    /**
+     * Для обработки событий кнопки "Инфо" о предмете и "Удалить" предмет
+     * @param e the event to be processed
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == info_button && selectionBox_list.getSelectedValue() != null) {
+            //выводим информациюоб уроке
+            String lessonText = (String) selectionBox_list.getSelectedValue();
+            for (Lesson el : lessons_arr)
+                if (lessonText.equals(el.getLessonName() + " (" + el.getTypeOfLesson() + ")")) {
 
-        while(selected_model.size() > 0) {
-            selection_model.addElement(selected_model.remove(selected_model.size() - 1));
+                    JOptionPane.showMessageDialog(null,
+                            "Преподаватель: " + el.getTeacherName() +
+                            "\nТип аттестации: " + el.getTypeOnSession() +
+                            "\nТип пары: " + el.getTypeOfLesson() +
+                            "\nКол-во часов: " + el.getAmountOfHours(), el.getLessonName(), JOptionPane.OK_CANCEL_OPTION);
+                    break;
+                }
+
+            info_button.setBackground(Color.gray);
+            info_button.setEnabled(false);
+
         }
+        if(e.getSource() == remove_button && selectionBox_list.getSelectedValue() != null) {
+            //удаляем урок
+            String lessonText = (String) selectionBox_list.getSelectedValue();
+            for (Lesson el : lessons_arr)
+                if (lessonText.equals(el.getLessonName() + " (" + el.getTypeOfLesson() + ")")) {
+                    thisGroup = groupService.deleteLesson(el, thisGroup);
+                    lessonService.delete(el);
+                    JOptionPane.showMessageDialog(null,
+                            "Предмет удален","УДАЛЕНИЕ" ,JOptionPane.OK_CANCEL_OPTION);
+                    break;
+                }
+            //lessons_arr = thisGroup.getLessons();
+            clearPanel();
+            remove_button.setBackground(Color.gray);
+            remove_button.setEnabled(false);
+        }
+    }
 
+
+
+    /**
+     * срабатывает при выборе элемента в selectionBox_list
+     * @param e the event that characterizes the change.
+     */
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+
+        if(e.getSource() == selectionBox_list && selectionBox_list.getSelectedValue() != null) {
+            //активируем кнопки информации и удаления
+            remove_button.setBackground(Color.red);
+            remove_button.setEnabled(true);
+            info_button.setBackground(Color.green);
+            info_button.setEnabled(true);
+        }
+    }
+
+
+
+    private void clearPanel() {
         group_comboBox.setSelectedIndex(-1);
-        dateBox_text.setText("");
-        today_checkBox.setSelected(false);
+        selectionBox_list.setListData(new String[]{});
         selectedGroup_label.setText("");
-        selectedDate_label.setText("");
-        note_textArea.setText("");
-
     }
 
 
@@ -567,9 +393,5 @@ public class NewLessonsPanel extends JPanel implements CaretListener, ActionList
     public String toString() {
         return "Новый урок";
     }
-
-
-
-
 
 }

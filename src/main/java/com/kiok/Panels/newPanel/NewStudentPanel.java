@@ -1,7 +1,5 @@
 package com.kiok.Panels.newPanel;
 
-import com.kiok.DB.DataBase;
-import com.kiok.MainApp;
 import com.kiok.Models.Group;
 import com.kiok.Models.Student;
 import com.kiok.service.GroupService;
@@ -35,7 +33,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
     private StudentService studentService;
 
     @Autowired
-    private GroupService groupService;// = MainApp.ctx.getBean(GroupService.class);;
+    private GroupService groupService;
 
     /**
      * y position of label
@@ -91,12 +89,10 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
 
     private JLabel image_label, imageText_label;
     private JLabel name_label, surname_label, groupNumber_label, phoneNumber_label,
-        dateOfBirth_label, creditBook_label, address_label, isStudentLeader_label;
+        dateOfBirth_label, creditBook_label, address_label;
     private JTextField name_text, surname_text, groupNumber_text, phoneNumber_text,
-            dateOfBirth_text, creditBook_text, address_text, isStudentLeader_text;
-    private JButton save_button, paneSave_button, paneCancel_button;
-    private JPanel saveButton_panel;
-    private int currentTextArray = 0;
+            dateOfBirth_text, creditBook_text, address_text;
+    private JButton save_button;
     private ArrayList<JTextField> textArray;
 
 
@@ -343,12 +339,14 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
             // 1 -> CANCEL
 
             if(result == 0) {
+                Group gr = groupService.findByGroupNumber(groupNumber_text.getText());
                 Student saveStudent = studentService.save(new Student(name_text.getText().toUpperCase(), surname_text.getText().toUpperCase(),
                         Date.valueOf(dateOfBirth_text.getText()), creditBook_text.getText(), phoneNumber_text.getText().toUpperCase(),
                         address_text.getText(), false,
-                        groupService.findByGroupNumber(groupNumber_text.getText())));
-                System.out.println(groupService.findByGroupNumber(groupNumber_text.getText()));
-                System.out.println(groupNumber_text.getText());
+                        gr));
+                groupService.addStudent(gr, saveStudent);
+                //System.out.println(groupService.findByGroupNumber(groupNumber_text.getText()));
+                //System.out.println(groupNumber_text.getText());
                 if(saveStudent != null) {
 
                     JOptionPane.showMessageDialog(this, "Сохранено");
@@ -385,7 +383,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         if(dateOfBirth.equals(""))
             return false;
         try{
-            Date.valueOf(dateOfBirth_text.getText());
+            Date.valueOf(dateOfBirth);
         }catch (IllegalArgumentException e){
             return false;
         }

@@ -1,15 +1,16 @@
 package com.kiok.service;
 
 import com.kiok.Models.Group;
-import com.kiok.Panels.newPanel.NewLessonsPanel;
+import com.kiok.Models.Lesson;
+import com.kiok.Models.Student;
 import com.kiok.dao.GroupRepos;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Component
@@ -38,5 +39,26 @@ public class GroupService {
             allNumbers.add(el.getGroupNumber());
         }
         return allNumbers;
+    }
+
+    public Group deleteLesson(Lesson lesson, Group group) {
+        Set<Lesson> ll = group.getLessons();
+        ll.remove(lesson);
+        group.setLessons(ll);
+//        groupRepos.delete(group);
+        return save(group);
+    }
+
+    public Group addStudent(Group group, Student student) {
+        List<Student> st = group.getStudentList();
+        st.add(student);
+        group.setStudentList(st);
+        return save(group);
+    }
+    public Group deleteStudent(Group group, Student student) {
+        List<Student> st = group.getStudentList();
+        st.remove(student);
+        group.setStudentList(st);
+        return save(group);
     }
 }

@@ -1,5 +1,4 @@
 package com.kiok.Panels.newPanel;
-import com.kiok.DB.DataBase;
 import com.kiok.MainApp;
 import com.kiok.Models.Group;
 import com.kiok.service.AdminService;
@@ -248,6 +247,10 @@ public class NewGroupPanel extends JPanel implements ActionListener, FocusListen
             //SAVE = 0, CANCEL = 1
             if(result == 0) {
                 try {
+                    if (groupService.findByGroupNumber(number_text.getText()) != null) {
+                        JOptionPane.showMessageDialog(this, "Группа с таким номером уже существует");
+                        return;
+                    }
                     groupService.save(new Group(number_text.getText()));
 
                     JOptionPane.showMessageDialog(this, "Сохранено");

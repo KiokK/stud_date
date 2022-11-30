@@ -1,6 +1,7 @@
 package com.kiok.Models;
 
 import java.sql.Date;
+import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -37,6 +38,36 @@ public class Student {
         this.address = address;
         this.studentLeader = studentLeader;
         this.group = group;
+    }
+
+    public void copy(Student otherStudent) {
+        this.name = otherStudent.getName();
+        this.surname = otherStudent.getSurname();
+        this.dateOfBirth = otherStudent.getDateOfBirth();
+        this.creditBook = otherStudent.getCreditBook();
+        this.phoneNumber = otherStudent.getPhoneNumber();
+        this.address = otherStudent.getAddress();
+        this.studentLeader = otherStudent.getStudentLeader();
+        this.group = otherStudent.getGroup();
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return studentLeader == student.studentLeader &&
+                id == student.id &&
+                name.equals(student.name) &&
+                surname.equals(student.surname) &&
+                creditBook.equals(student.creditBook) &&
+                phoneNumber.equals(student.phoneNumber) &&
+                address.equals(student.address) &&
+                group.getGroupNumber().equals(student.group);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname, dateOfBirth, creditBook, phoneNumber, address, studentLeader, group);
     }
 
     public Long getId() {
@@ -101,6 +132,9 @@ public class Student {
 
     public void setStudentLeader(boolean studentLeader) {
         this.studentLeader = studentLeader;
+    }
+    public boolean getStudentLeader() {
+        return this.studentLeader;
     }
 
     public Group getGroup() {
