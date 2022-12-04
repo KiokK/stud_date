@@ -1,34 +1,53 @@
 package com.kiok.Models;
 
 import java.sql.Date;
-import java.util.Objects;
 
 import javax.persistence.*;
-
+/**
+ * Класс сущность "Студент" связан с таблицей БД
+ * @author Кихтенко О.Ю. 10702120
+ */
 @Entity
 public class Student {
+    /** Уникальный идентификатор объекта */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    /** Имя студента */
     private String name;
+    /** Фамилия студента */
     private String surname;
+    /** Дата рождения студента */
     private Date dateOfBirth;
+    /** № зачетной книжки студента */
     private String creditBook;
+    /** № телефона студента */
     private String phoneNumber;
+    /** Адресс студента */
     private String address;
+    /** Указатель на старосту */
     private boolean studentLeader;
 
+    /** Группа студента */
     @ManyToOne ( cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn (name="group_id")
     private Group group;
 
-//    @OneToMany( cascade=CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<SkippingLesson> skippingLessonList = new ArrayList<>();
-
-
+    /** Пустой коструктор создания объекта */
     public Student() {
     }
 
+    /**
+     * Коструктор создания объекта
+     * @param name Имя студента
+     * @param surname Фамилия студента
+     * @param dateOfBirth Дата рождения студента
+     * @param creditBook № зачетной книжки студента
+     * @param phoneNumber № телефона студента
+     * @param address Адресс студента
+     * @param studentLeader true - если студент староста, иначе - false
+     * @param group Группа студента
+     */
     public Student(String name, String surname, Date dateOfBirth, String creditBook, String phoneNumber, String address, boolean studentLeader, Group group) {
         this.name = name;
         this.surname = surname;
@@ -40,6 +59,11 @@ public class Student {
         this.group = group;
     }
 
+    /**
+     * Метод вызывается от объекта класса и копирует в него все поля
+     * переданного объекта
+     * @param otherStudent из которого копмруем данные
+     */
     public void copy(Student otherStudent) {
         this.name = otherStudent.getName();
         this.surname = otherStudent.getSurname();
@@ -49,25 +73,6 @@ public class Student {
         this.address = otherStudent.getAddress();
         this.studentLeader = otherStudent.getStudentLeader();
         this.group = otherStudent.getGroup();
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
-        return studentLeader == student.studentLeader &&
-                id == student.id &&
-                name.equals(student.name) &&
-                surname.equals(student.surname) &&
-                creditBook.equals(student.creditBook) &&
-                phoneNumber.equals(student.phoneNumber) &&
-                address.equals(student.address) &&
-                group.getGroupNumber().equals(student.group);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, surname, dateOfBirth, creditBook, phoneNumber, address, studentLeader, group);
     }
 
     public Long getId() {

@@ -17,18 +17,15 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-//@Component
+/**
+ * Класс главного окна, которое будет содержать все панели с графическим интерфейсом
+ * @author Кихтенко О.Ю. 10702120
+ */
 public class AdminPage extends JFrame implements ActionListener{
-
-    private static final long serialVersionUID = 1L;
-
-    //private ConfigurableApplicationContext applicationContext;
-    public static final short WAGE = 100;
-
-    public static final String NAME = "Registration System";
+    /** Переменная для подписи в заголовке окна при изменении рабочей области */
+    public static final String NAME = "Страница ";
 
     /**
      * AdminPanel window width
@@ -40,20 +37,31 @@ public class AdminPage extends JFrame implements ActionListener{
      */
     public static int H_FRAME = 2 * W_FRAME / 3;
 
-    /**
-     * frame edge
-     */
+    /** frame edge (для настройки отступов) */
     public static Insets INSETS;
 
+    /** Строка меню */
     private JMenuBar menuBar_menubar;
-    private JMenu homePage_menu, record_menu, view_menu, system_menu;
-    private JMenuItem addStudent_item, addGroup_item, addLesson_item, viewRecord_item;
-    private JMenuItem settings_item, reset_item, logout_item;
-    private HomePage homePage;
+    /** Часть меню для создания новых записей */
+    private JMenu record_menu;
+    /** Часть меню для просмотра списков */
+    private JMenu view_menu;
+    /** Часть меню для системных команд (выход, перезагрузка) */
+    private JMenu system_menu;
+    /** Элемент меню - новый студент - для создания новых записей {@link #record_menu} */
+    private JMenuItem addStudent_item;
+    /** Элемент меню - новый групп - для создания новых записей {@link #record_menu} */
+    private JMenuItem addGroup_item;
+    /** Элемент меню - новый урок - для создания новых записей {@link #record_menu} */
+    private JMenuItem addLesson_item;
+    /** Элемент меню - просмотр списков - для создания новых записей {@link #view_menu} */
+    private JMenuItem viewRecord_item;
+    /** Элемент меню - для системных команд - для перезагрузки системы {@link #system_menu} */
+    private JMenuItem reset_item;
+    /** Элемент меню - для системных команд - для завершения программы {@link #system_menu} */
+    private JMenuItem logout_item;
     private ArrayList<JPanel> components = new ArrayList<>();
-    /**
-     * Текущий компонент
-     */
+    /** Текущий компонент  */
     private int currentComponent = 0;
 
     public AdminPage() {
@@ -80,7 +88,10 @@ public class AdminPage extends JFrame implements ActionListener{
 
     }
 
-
+    /**
+     * "Графический пользовательский интерфейс"
+     * Метод содержит создание интерфейса окна
+     */
     private void GUI() {
 
         createMenus();
@@ -90,14 +101,12 @@ public class AdminPage extends JFrame implements ActionListener{
     }
 
 
-    /**
-     * Метод создания верхнего меню
-     */
+    /** Метод создания меню для GUI*/
     private void createMenus() {
 
         menuBar_menubar = new JMenuBar();
 
-        homePage_menu = new JMenu("Главная");
+        JMenu homePage_menu = new JMenu("О программе");
         homePage_menu.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -108,7 +117,7 @@ public class AdminPage extends JFrame implements ActionListener{
         });
 
         record_menu = new JMenu("Запись");
-        view_menu = new JMenu("View");
+        view_menu = new JMenu("Списки");
         system_menu = new JMenu("System");
 
         addGroup_item = new JMenuItem("Новая группа");
@@ -127,11 +136,6 @@ public class AdminPage extends JFrame implements ActionListener{
         view_menu.add(viewRecord_item);
         viewRecord_item.addActionListener(this);
 
-
-        settings_item = new JMenuItem("Settings");
-        system_menu.add(settings_item);
-        settings_item.addActionListener(this);
-
         reset_item = new JMenuItem("Reset");
         system_menu.add(reset_item);
         reset_item.addActionListener(this);
@@ -143,7 +147,6 @@ public class AdminPage extends JFrame implements ActionListener{
         menuBar_menubar.add(homePage_menu);
         menuBar_menubar.add(record_menu);
         menuBar_menubar.add(view_menu);
-//        menuBar_menubar.add(bill_menu);
         menuBar_menubar.add(system_menu);
 
 
@@ -151,7 +154,7 @@ public class AdminPage extends JFrame implements ActionListener{
 
     }
 
-
+    /** Метод создания элементов меню для GUI*/
     private void createComponents() {
 
         components.add(new HomePage());
@@ -162,7 +165,7 @@ public class AdminPage extends JFrame implements ActionListener{
 
     }
 
-
+    /** Метод инициализации текущего компонента окна */
     private void init() {
 
         setContentPane(components.get(currentComponent));
@@ -173,8 +176,9 @@ public class AdminPage extends JFrame implements ActionListener{
     }
 
     /**
-     * Происходит при нажатии на элементы меню верхней панели
-     * @param e
+     * Метод переопределён для отображения новых окон пользователю
+     * в соответствии с  выбором
+     * @param e нажатый элемент верхнего меню
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -182,7 +186,7 @@ public class AdminPage extends JFrame implements ActionListener{
         if( ((JMenuItem)e.getSource()).getText().equals(addGroup_item.getText())) {
 
             if(currentComponent == 1) {
-                components.set(currentComponent, new NewGroupPanel());
+                components.set(currentComponent, MainApp.ctx.getBean(NewGroupPanel.class));
             } else {
                 currentComponent = 1;
             }
@@ -222,12 +226,7 @@ public class AdminPage extends JFrame implements ActionListener{
             init();
             return;
         }
-        if( ((JMenuItem)e.getSource()).getText().equals(settings_item.getText())) {
 
-            // Settings pane .. .
-            JOptionPane.showMessageDialog(this, "Not available");
-            return;
-        }
         if( ((JMenuItem)e.getSource()).getText().equals(reset_item.getText())) {
 
             EventQueue.invokeLater(new Runnable() {

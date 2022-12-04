@@ -25,50 +25,39 @@ import javax.swing.JTextField;
  * Класс создания окна с графическим интерфейсом для пользователя при входе в систему
  * @author Кихтенко О.Ю. 10702120
  */
-
 @Component
 public class Login extends JFrame{
+    /**  Внедряем зависимость для работы с бд (таблицы админ)  */
     @Autowired
     private AdminService adminService;
 
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * login window width
-     */
+    /** login window width */
     public static final int W_FRAME = 540;
 
-    /**
-     * login window height
-     */
+    /** login window height */
     public static final int H_FRAME = 360;
 
-    /**
-     * wrong password or username error message
-     */
-    private final String errorText = "Wrong username or password";
+    /** Поле ошибочного сообщения  */
+    private final String errorText = "Ошибочный логин или пароль";
 
-    /**
-     * Контент страницы, содержит все элементы пользовательского интерфейса
-     */
+    /** Контент страницы, содержит все элементы пользовательского интерфейса */
     private JPanel contentPane;
-    /**
-     * Кнопка для проверки логина
-     */
+    /** Кнопка для проверки логина */
     private JButton button_login;
-    private JLabel label_username, label_password, label_icon, label_errorText;
+    /** Переменные для отображения поля логина и ошибочного текста в GUI */
+    private JLabel label_username, label_errorText;
+    /** Поле для ввода имени пользователя при авторизации */
     private JTextField textField_username;
+    /** Поле для ввода пароля пользователя при авторизации */
     private JPasswordField passwordField_password;
-    /**
-     * Вспомогательная переменная для настройки отступов
-     */
+    /** Вспомогательная переменная для настройки отступов */
     private Insets insets;
 
 
-
+    /** Конструктор создания окна */
     public Login() {
 
-        super("Login");
+        super("Вход");
         setIconImage(Toolkit.getDefaultToolkit().getImage("src\\icons\\Login_user_24.png"));
         setResizable(false);//изменяемость размера
         setLayout(null);//менеджер расположения чтобы узнать, какой менеджер им используется в данный момент
@@ -96,13 +85,13 @@ public class Login extends JFrame{
                 H_FRAME - insets.bottom - insets.top);
 
         //создание подписи поля для ввода имени пользователя
-        label_username = new JLabel("Username");
+        label_username = new JLabel("Логин");
         label_username.setFont(new Font("Tahoma", Font.PLAIN, 14));
         label_username.setBounds(120, 140, 70, 20);
         contentPane.add(label_username);
 
         //создание подписи поля для ввода пароля пользователя
-        label_password = new JLabel("Password");
+        JLabel label_password = new JLabel("Пароль");
         label_password.setFont(label_username.getFont());
         label_password.setBounds(label_username.getX(), label_username.getY() + 40,
                 label_username.getWidth(), label_username.getHeight());
@@ -136,7 +125,7 @@ public class Login extends JFrame{
         addLoginButton();
 
         //добавление картинки на панель
-        label_icon = new JLabel(new ImageIcon("src\\icons\\Login_user_72.png"));
+        JLabel label_icon = new JLabel(new ImageIcon("src\\icons\\Login_user_72.png"));
         label_icon.setBounds(textField_username.getX() + 20,
                             textField_username.getY() - 100, 72, 72);
         contentPane.add(label_icon);
@@ -154,17 +143,21 @@ public class Login extends JFrame{
     }
 
     /**
-     * создвет кнопку и добавляет ее к контенту окна пользователя
+     * Создает кнопку и добавляет ее к контенту окна пользователя
      */
     private void addLoginButton(){
-        button_login = new JButton("Login");
+        button_login = new JButton("Войти");
         button_login.setBounds(textField_username.getX() + 20,
                 label_username.getY() + 80, 80, 22);
         button_login.setFocusPainted(false);
         button_login.addActionListener(new ActionListener() {
+            /**
+             * Переопределенный метод для авторизации пользователя по кнопке "Войти"
+             * @param e the event to be processed
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                //проверяем на пустоту
                 if(textField_username.getText().equals("") ||
                    String.valueOf(passwordField_password.getPassword()).equals("")) {
                     label_errorText.setText(errorText);
@@ -175,15 +168,10 @@ public class Login extends JFrame{
                     if( adminService.verifyLogin(textField_username.getText(),
                             String.valueOf(passwordField_password.getPassword())) != null ) {
 
-						/*JOptionPane.showMessageDialog(contentPane, "Login successful. Welcome", "Login",
-								JOptionPane.INFORMATION_MESSAGE);*/
-
                         EventQueue.invokeLater(new Runnable() {
                             @Override
                             public void run() {
                                 Login.this.dispose();//освобождение ресурсов окна, связанных с данным Java объектом.
-                                // Это не означает, что объект должен быть уничтожен,
-                                // просто ОС уничтожит связанное с ним окно.
                                 new AdminPage();//создаем и автоматически запускаем новое поле админ. панели
                             }
                         });

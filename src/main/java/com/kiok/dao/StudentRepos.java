@@ -7,10 +7,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+/**
+ * Класс взаимодействия с БД таблицы студентов,
+ * наследуется от CrudRepository
+ * @author Кихтенко О.Ю. 10702120
+ */
 @Component
 @Repository
 public interface StudentRepos extends CrudRepository<Student, Long> {
-    Student findBySurname(String username);
-    List<Student> findByGroup(Group group);
+
 }

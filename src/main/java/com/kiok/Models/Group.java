@@ -3,27 +3,33 @@ package com.kiok.Models;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
-
+/**
+ * Класс сущность "Группа" связан с таблицей БД
+ * @author Кихтенко О.Ю. 10702120
+ */
 @Entity
 @Table(name = "group_stud")
 public class Group {
+    /** Уникальный идентификатор объекта */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id;
-
+    /** Номер группы */
     private String groupNumber;
 
-//    @OneToOne
-//    private Timetable timetable = null;
-
-    //одной группе множество студентов
-    @OneToMany( cascade=CascadeType.MERGE, fetch = FetchType.EAGER)//каждый раз при получении группы получаем и информацию о студенте
+    /** Список студентов данной группы */
+    @OneToMany( cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<Student> studentList;
 
+    /** Список уроков данной группы */
     @OneToMany( cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Lesson> lessons;
 
+    /**
+     * Конструктор создания объекта
+     * @param groupNumber номер группы
+     */
     public Group(String groupNumber) {
         this.groupNumber = groupNumber;
     }

@@ -1,24 +1,25 @@
 package com.kiok.service;
 
-import com.kiok.Models.Admin;
 import com.kiok.Models.Student;
 import com.kiok.dao.StudentRepos;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 /**
- * Бизнес-логика работы с пользователями
+ * Бизнес-логика работы БД с пользователями {@link Student}
+ * @author Кихтенко О.Ю. 10702120
  */
-@Service
 @Component
 public class StudentService {
+    /** Для работы с таблицей БД студентов */
     @Autowired
     private StudentRepos studentRepos;
 
+    /**
+     * Метод для сохранения пользователя в БД
+     * @param student которого сохраняем
+     * @return сохраненный объект или null, если не сохранилось
+     */
     public Student save(Student student) {
         if (student == null)
             return null;

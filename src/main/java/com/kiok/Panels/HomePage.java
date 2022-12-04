@@ -2,13 +2,15 @@ package com.kiok.Panels;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
+/**
+ * Класс панели информации о приложении и разработчике
+ * @author Кихтенко О.Ю. 10702120
+ */
 public class HomePage extends JPanel{
-
-    private static final long serialVersionUID = 1L;
-
+    /** Картина с информацией */
     private JLabel backgroundImage;
 
+    /** Конструктор создания панели */
     public HomePage() {
 
         setLayout(null);
@@ -20,16 +22,15 @@ public class HomePage extends JPanel{
         backgroundImage.setIcon(new ImageIcon("src\\icons\\background_image.jpg"));
 
         add(backgroundImage);
-
-        // Home page: only picture
-        // but new features will come...
-
     }
 
-
+    /**
+     * Переопределенный метод для возвращения названия панели
+     * @return строковое представление названия
+     */
     @Override
     public String toString() {
-        return "Home Page";
+        return "О программе";
     }
 
 

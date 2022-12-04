@@ -1,42 +1,33 @@
 package com.kiok.service;
 
-import com.kiok.Models.Group;
 import com.kiok.Models.Lesson;
 import com.kiok.dao.LessonRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
-@Service
+/**
+ * Бизнес-логика работы БД с уроком {@link Lesson}
+ * @author Кихтенко О.Ю. 10702120
+ */
 @Component
 public class LessonService {
+    /** Для работы с таблицей БД уроков */
     @Autowired
     private LessonRepos lessonRepos;
 
-    public Lesson create(Lesson lesson){
-        if (lesson == null) return null;
-        return lessonRepos.save(lesson);
-    }
-
-    public List<Lesson> findAllByGroup(Group group){
-        return lessonRepos.findByGroup(group);
-    }
-
+    /**
+     * Метод для сохранения урок в БД
+     * @param lesson которого сохраняем
+     * @return сохраненный объект или null, если не сохранилось
+     */
     public Lesson save(Lesson lesson){
         return lessonRepos.save(lesson);
     }
 
-    public Lesson findById(Long id){
-        Optional<Lesson> lesson = lessonRepos.findById(id);
-        if (lesson == null)
-            return null;
-        else
-            return lesson.get();
-    }
-
+    /**
+     * Метод удаляет урок из БД
+     * @param lesson урок, который хотим удалить
+     */
     public void delete(Lesson lesson) {
         lessonRepos.delete(lesson);
     }

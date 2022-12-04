@@ -1,5 +1,5 @@
 package com.kiok.Panels.newPanel;
-//import com.kiok.DB.DataBase;
+
 import com.kiok.Models.Group;
 import com.kiok.Models.Lesson;
 import com.kiok.service.GroupService;
@@ -14,19 +14,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
-import javax.swing.event.CaretListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+/**
+ * Класс создания панели графического интерфейса для создания нового урока
+ * @author Кихтенко О.Ю. 10702120
+ */
 @Component
 public class NewLessonsPanel extends JPanel implements ActionListener, ListSelectionListener{
-
-
-    private static final long serialVersionUID = 2L;
-
-    //@Autowired
-    private GroupService groupService;// = MainApp.ctx.getBean(GroupService.class);
-
+    /**  Для работы с бд (таблицы группы студентов)  */
+    private GroupService groupService;
+    /**  Внедряем зависимость для работы с бд (таблицы занятия)  */
     @Autowired
     private LessonService lessonService;
 
@@ -50,69 +49,90 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
      */
     private final int BS = 70;
 
-
+    /** Список предметов(уроков) для группы */
     private JList<String> selectionBox_list;
-    private DefaultListModel<String> selection_model;
-    private JTextField lessonName_text, teacherName_text;
+
+    /** Поле ввода названия урока */
+    private JTextField lessonName_text;
+
+    /** Поле ввода имени преподавателя */
+    private JTextField teacherName_text;
+
+    /** Поле ввода количества часов урока */
     private JTextField numberTime_text;
+    /**  Скролл для списка уроков */
     private JScrollPane selection_scroll;
-    private JButton info_button, remove_button, save_button;
+    /** Кнопка подробной информации о предмете */
+    private JButton info_button;
+    /** Кнопка удаления предмета */
+    private JButton remove_button;
+    /** Кнопка сохрания добавленного предмета */
+    private JButton save_button;
 
-    private JRadioButton lk_rbt, pr_rbt, lr_rbt, sem_rbt, zach_rbt, dif_rbt, ekz_rbt;
+    /** Группа для выбора из JRadioButton типо предмета */
+    private ButtonGroup buttonGroup_typeOfClass;
+    /** Группа для выбора из JRadioButton типо аттестации по предмету */
+    private ButtonGroup buttonGroup_typeOfExam;
 
-    private ButtonGroup buttonGroup_typeOfClass, buttonGroup_typeOfExam;
-
-    private JLabel selectionBox_label, group_label, lessonName_label, teacherName_label;
-    private JLabel selectionGroup_label, selectedGroup_label;
+    /** Поле подписи для группы */
+    private JLabel group_label;
+    /** Поле подписи для названия урока */
+    private JLabel lessonName_label;
+    /** Поле подписи для имени преподавателя */
+    private JLabel teacherName_label;
+    /** Поле подписи для выбранной группы */
+    private JLabel selectedGroup_label;
+    /** Поле подписи для количества часов урока */
     private JLabel numberTime_label;
-
+    /** Список всех номеров группы */
     private ArrayList<String> groupNumbers_arrayList;
-
+    /** Поле для выбора номера группы из всех возможных */
     private JComboBox<String> group_comboBox;
-    private DefaultComboBoxModel<String> group_model;
-
+    /** Множество предметов, которые принадлежат выбранной группе {@link #thisGroup} */
     private Set<Lesson> lessons_arr;
+    /** Группа, которой будут добавлятья предметы(уроки) */
     private Group thisGroup;
 
     /**
      * Конструктор создания объекта панели и графического интерфейса
-     * @param groupService внедряется из ApplicationContext при срабатывании конструктора
+     * @param groupService внедряется из ApplicationContext для работы с БД
      */
     @Autowired
     public NewLessonsPanel(GroupService groupService) {
         this.groupService = groupService;
-
         setLayout(null);
-
+        //берем из БД все номера групп
         groupNumbers_arrayList = groupService.findAllNumbers();
-        selection_model = new DefaultListModel<>();
-      //  group_model = new DefaultComboBoxModel<>();
 
-        //for(int i = 0; i < groupNumbers_arrayList.size(); i++)
-        //    group_model.addElement(groupNumbers_arrayList.get(i));
-
+        //создаем список для вывода предметов, выбранной группы
         selectionBox_list = new JList<String>();
         selectionBox_list.setFixedCellHeight(24);
         selectionBox_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionBox_list.addListSelectionListener(this);
-
+        // добавляем полосу прокрутки для предметов
         selection_scroll = new JScrollPane(selectionBox_list);
         selection_scroll.setBounds(LBX, LBY, LBW, LBH);
         add(selection_scroll);
-
-        selectionBox_label = new JLabel("Список предметов");
+        //Создаем подпись для списка предметов(уроков)
+        JLabel selectionBox_label = new JLabel("Список предметов");
         selectionBox_label.setBounds(LBX + (LBW - 100) / 2, LBY - BH - 30, LBW, 50);
         add(selectionBox_label);
 
+        //Создаем подпись для выпадающего списка выбора групп
         group_label = new JLabel("Выбрать группу");
         group_label.setBounds(LBX, LBY + LBH + 25, LBW, 24);
         add(group_label);
 
-        //comboBox для выбора группы
+        //Создаем выпадающий список для выбора группы
         group_comboBox = new JComboBox<String>(groupNumbers_arrayList.toArray(new String[groupNumbers_arrayList.size()]));
         group_comboBox.setSelectedItem(null);
         group_comboBox.setBounds(LBX, group_label.getY() + group_label.getHeight(), LBW, 24);
         group_comboBox.addActionListener(new ActionListener() {
+            /**
+             * Переопределенный метод для выпадающего списка групп.
+             * При выборе элемента выводит список предметов, выбранной группы
+             * @param e the event to be processed
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectedGroup_label.setText((String) group_comboBox.getSelectedItem());
@@ -129,11 +149,12 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
         });
         add(group_comboBox);
 
-        //выбранная группа
-        selectionGroup_label = new JLabel("Выбранная группа");
+        //создаем подпись для выбранной группы
+        JLabel selectionGroup_label = new JLabel("Выбранная группа");
         selectionGroup_label.setBounds(group_label.getX() + LBS, group_label.getY(), LBW, 24);
         add(selectionGroup_label);
 
+        //Создаем поле вывода выбранной группы (для отображения пользователю)
         selectedGroup_label = new JLabel((String) group_comboBox.getSelectedItem());
         selectedGroup_label.setFont(new Font(Font.SANS_SERIF, Font.BOLD + Font.ITALIC, 16));
         selectedGroup_label.setForeground(Color.gray);
@@ -197,17 +218,17 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
         add(numberTime_text);
 
         //Создание выбора типа занятия
-        lk_rbt = new JRadioButton("ЛК.");
+        JRadioButton lk_rbt = new JRadioButton("ЛК.");
         lk_rbt.setBounds(lessonName_text.getX() + lessonName_text.getWidth() + 50,
                 newLesson_label.getY() + 60, 60, BH);
         lk_rbt.setSelected(true);
-        pr_rbt = new JRadioButton("ПР.");
+        JRadioButton pr_rbt = new JRadioButton("ПР.");
         pr_rbt.setBounds(lk_rbt.getX() + lk_rbt.getWidth() + 10,
                 newLesson_label.getY() + 60, 60, BH);
-        lr_rbt = new JRadioButton("ЛР.");
+        JRadioButton lr_rbt = new JRadioButton("ЛР.");
         lr_rbt.setBounds(pr_rbt.getX() + pr_rbt.getWidth() + 10,
                 newLesson_label.getY() + 60, 60, BH);
-        sem_rbt = new JRadioButton("СЕМ.");
+        JRadioButton sem_rbt = new JRadioButton("СЕМ.");
         sem_rbt.setBounds(lr_rbt.getX() + lr_rbt.getWidth() + 10,
                 newLesson_label.getY() + 60, 60, BH);
         buttonGroup_typeOfClass = new ButtonGroup();
@@ -219,14 +240,14 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
         add(lr_rbt); add(sem_rbt);
 
         //Создание выбора типа экзаменации оценки
-        zach_rbt = new JRadioButton("зач.");
+        JRadioButton zach_rbt = new JRadioButton("зач.");
         zach_rbt.setBounds(lessonName_text.getX() + lessonName_text.getWidth() + 50,
                 newLesson_label.getY() + 90, 60, BH);
         zach_rbt.setSelected(true);
-        dif_rbt = new JRadioButton("диф.");
+        JRadioButton dif_rbt = new JRadioButton("диф.");
         dif_rbt.setBounds(lk_rbt.getX() + lk_rbt.getWidth() + 10,
                 newLesson_label.getY() + 90, 60, BH);
-        ekz_rbt = new JRadioButton("экз.");
+        JRadioButton ekz_rbt = new JRadioButton("экз.");
         ekz_rbt.setBounds(pr_rbt.getX() + pr_rbt.getWidth() + 10,
                 newLesson_label.getY() + 90, 60, BH);
         buttonGroup_typeOfExam = new ButtonGroup();
@@ -243,7 +264,10 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
         save_button.setFocusPainted(false);
         save_button.setBackground(Color.CYAN);
         save_button.addActionListener(new ActionListener() {
-
+            /**
+             * Переопределенный метод для сохранения добавленного предмета в БД.
+             * @param e the event to be processed
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -252,49 +276,53 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
                     teacherName_text.getText().equals("") ||
                     numberTime_text.getText().equals("") ||
                     group_comboBox.getSelectedItem() == null) {
-
+                    //выводим сообщение об не верном заполнении
                     JOptionPane.showMessageDialog(null,
                             "Пожалуйста введите информацию корректно\nполя не могут быть пустыми\n Не забудьте выбрать группу", "ОШИБКА", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                } else {
-                    String text = "\n  Назв. предмета :\t" + lessonName_text.getText().toUpperCase() + "\n\n" +
+                String text = "\n  Назв. предмета :\t" + lessonName_text.getText().toUpperCase() + "\n\n" +
                             "  Преподаватель : \t" + teacherName_text.getText().toUpperCase() + "\n\n" +
                             "  Количество часов : \t" + numberTime_text.getText().toUpperCase() + "\n\n" +
                             "  № группы : \t\t" + group_comboBox.getSelectedItem() + "\n\n" +
                             "  Тип аттестации : \t" + getSelectedButtonText(buttonGroup_typeOfExam) + "\n\n" +
                             "  Тип занятия : \t\t" + getSelectedButtonText(buttonGroup_typeOfClass) + "\n\n";
-                    Object[] pane = {
-                            new JLabel("Предмет будет сохранен"),
-                            new JTextArea(text) {
-                                public boolean isEditable() {
-                                    return false;
-                                };
+                Object[] pane = {
+                        new JLabel("Предмет будет сохранен"),
+                        new JTextArea(text) {
+                            public boolean isEditable() {
+                                return false;
                             }
+                        }
 
-                    };
+                };
 
-                    //окно перепроверки перед сохранением
-                    int result = JOptionPane.showOptionDialog(null, pane, "Данные", 1, 1,
+                //окно перепроверки перед сохранением
+                int result = JOptionPane.showOptionDialog(null, pane, "Данные", 1, 1,
                             new ImageIcon("src\\icons\\accounting_icon_1_32.png"), new Object[] {"Сохранить", "Закрыть"}, "Закрыть");
 
-                    if(result == 0) { // 0 -> SAVE
-                        Lesson saveLesson = lessonService.save(new Lesson(lessonName_text.getText(), teacherName_text.getText(),
-                                getSelectedButtonText(buttonGroup_typeOfExam),
-                                numberTime_text.getText(), getSelectedButtonText(buttonGroup_typeOfClass),
-                                thisGroup));
-                        thisGroup.addLesson(saveLesson);
-                        groupService.save(thisGroup);
-                        if(saveLesson != null) {
-
-                            JOptionPane.showMessageDialog(null, "Сохранено");
-                            clearPanel();
-                        } else {
-
-                            JOptionPane.showMessageDialog(null, "Не сохранено", "DATABASE ERROR", JOptionPane.ERROR_MESSAGE);
-                        }
+                if(result == 0) { // 0 -> SAVE
+                    //сохраняем предмет в БД
+                    Lesson saveLesson = lessonService.save(new Lesson(lessonName_text.getText(), teacherName_text.getText(),
+                            getSelectedButtonText(buttonGroup_typeOfExam),
+                            numberTime_text.getText(), getSelectedButtonText(buttonGroup_typeOfClass),
+                            thisGroup));
+                    //добавляем предмет группе
+                    thisGroup.addLesson(saveLesson);
+                    //сохраняем в БД
+                    groupService.save(thisGroup);
+                    if (saveLesson != null) {
+                        //если предмет успешно сохранился в БД
+                        JOptionPane.showMessageDialog(null, "Сохранено");
+                        clearPanel();
+                    } else {
+                        //сообщение при ошибку сохранения
+                        JOptionPane.showMessageDialog(null, "Не сохранено", "DATABASE ERROR", JOptionPane.ERROR_MESSAGE);
                     }
-
                 }
+
+
 
             }
         });
@@ -328,7 +356,7 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == info_button && selectionBox_list.getSelectedValue() != null) {
             //выводим информациюоб уроке
-            String lessonText = (String) selectionBox_list.getSelectedValue();
+            String lessonText = selectionBox_list.getSelectedValue();
             for (Lesson el : lessons_arr)
                 if (lessonText.equals(el.getLessonName() + " (" + el.getTypeOfLesson() + ")")) {
 
@@ -340,13 +368,10 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
                     break;
                 }
 
-            info_button.setBackground(Color.gray);
-            info_button.setEnabled(false);
-
         }
         if(e.getSource() == remove_button && selectionBox_list.getSelectedValue() != null) {
             //удаляем урок
-            String lessonText = (String) selectionBox_list.getSelectedValue();
+            String lessonText = selectionBox_list.getSelectedValue();
             for (Lesson el : lessons_arr)
                 if (lessonText.equals(el.getLessonName() + " (" + el.getTypeOfLesson() + ")")) {
                     thisGroup = groupService.deleteLesson(el, thisGroup);
@@ -355,14 +380,11 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
                             "Предмет удален","УДАЛЕНИЕ" ,JOptionPane.OK_CANCEL_OPTION);
                     break;
                 }
-            //lessons_arr = thisGroup.getLessons();
             clearPanel();
             remove_button.setBackground(Color.gray);
             remove_button.setEnabled(false);
         }
     }
-
-
 
     /**
      * срабатывает при выборе элемента в selectionBox_list
@@ -381,14 +403,17 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
     }
 
 
-
+    /** Метод очищает заполненные пользователем поля */
     private void clearPanel() {
         group_comboBox.setSelectedIndex(-1);
         selectionBox_list.setListData(new String[]{});
         selectedGroup_label.setText("");
     }
 
-
+    /**
+     * Переопределенный метод для возвращения названия панели
+     * @return строковое представление названия
+     */
     @Override
     public String toString() {
         return "Новый урок";

@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.sql.Date;
-import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,14 +23,17 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
+/**
+ * Класс создания панели с графическим интерфейсом для создания нового студента
+ * @author Кихтенко О.Ю. 10702120
+ */
 @Component
 public class NewStudentPanel extends JPanel implements FocusListener, ActionListener{
 
-    private static final long serialVersionUID = 1L;
-
+    /**  Внедряем зависимость для работы с бд (таблицы студентов)  */
     @Autowired
     private StudentService studentService;
-
+    /**  Внедряем зависимость для работы с бд (таблицы группы студентов)  */
     @Autowired
     private GroupService groupService;
 
@@ -78,24 +80,23 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
     /**
      * width of the button
      */
-    private final int BW = 80;
+    private final int BW = 160;
 
     /**
      * height of the button
      */
     private final int BH = 30;
-
-    private final int TEXT_EDGE = 30;
-
-    private JLabel image_label, imageText_label;
+    /** Поля подписи для личных данных студента соответственно */
     private JLabel name_label, surname_label, groupNumber_label, phoneNumber_label,
         dateOfBirth_label, creditBook_label, address_label;
+    /** Поля для ввода личных данных студента соответственно */
     private JTextField name_text, surname_text, groupNumber_text, phoneNumber_text,
             dateOfBirth_text, creditBook_text, address_text;
+
+    /** Кнопка для сохранения личных данных студента соответственно */
     private JButton save_button;
-    private ArrayList<JTextField> textArray;
 
-
+    /** Метод создания и размещения полей {@link #name_label} и {@link #name_text} */
     private void nameFields(){
         name_label = new JLabel("Имя");
         name_label.setBounds(LX, LY, LW, LH);
@@ -104,7 +105,6 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         name_text = new JTextField();
         name_text.setBounds(name_label.getX() + LW + LHS, name_label.getY(), TW, TH);
         name_text.addFocusListener(this);
-        textArray.add(name_text);
         name_text.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(save_button != null) {
@@ -114,6 +114,8 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         });
         add(name_text);
     }
+
+    /** Метод создания и размещения полей {@link #surname_label} и {@link #surname_text} */
     private void surNameFields(){
         surname_label = new JLabel("Фамилия");
         surname_label.setBounds(name_label.getX(), name_label.getY() + LVS, LW, LH);
@@ -122,7 +124,6 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         surname_text = new JTextField();
         surname_text.setBounds(surname_label.getX() + LW + LHS, surname_label.getY(), TW, TH);
         surname_text.addFocusListener(this);
-        textArray.add(surname_text);
         surname_text.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(save_button != null) {
@@ -132,6 +133,8 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         });
         add(surname_text);
     }
+
+    /** Метод создания и размещения полей {@link #groupNumber_label} и {@link #groupNumber_text} */
     private void groupNumberFields(){
         groupNumber_label = new JLabel("Группа");
         groupNumber_label.setBounds(surname_label.getX(), surname_label.getY() + LVS, LW, LH);
@@ -140,7 +143,6 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         groupNumber_text = new JTextField();
         groupNumber_text.setBounds(groupNumber_label.getX() + LW + LHS, groupNumber_label.getY(), TW, TH);
         groupNumber_text.addFocusListener(this);
-        textArray.add(groupNumber_text);
         groupNumber_text.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(save_button != null) {
@@ -150,6 +152,8 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         });
         add(groupNumber_text);
     }
+
+    /** Метод создания и размещения полей {@link #dateOfBirth_label} и {@link #dateOfBirth_text} */
     private void dateOfBirthFields(){
         dateOfBirth_label = new JLabel("Дата рождения");
         dateOfBirth_label.setBounds(groupNumber_label.getX(), groupNumber_label.getY() + LVS, LW, LH);
@@ -158,7 +162,6 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         dateOfBirth_text = new JTextField();
         dateOfBirth_text.setBounds(dateOfBirth_label.getX() + LW + LHS, dateOfBirth_label.getY(), TW, TH);
         dateOfBirth_text.addFocusListener(this);
-        textArray.add(dateOfBirth_text);
         dateOfBirth_text.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(save_button != null) {
@@ -168,6 +171,8 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         });
         add(dateOfBirth_text);
     }
+
+    /** Метод создания и размещения полей {@link #creditBook_label} и {@link #creditBook_text} */
     private void creditBookFields(){
         creditBook_label = new JLabel("Номер зачетной книги");
         creditBook_label.setBounds(dateOfBirth_label.getX(), dateOfBirth_label.getY() + LVS, LW, LH);
@@ -176,7 +181,6 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         creditBook_text = new JTextField();
         creditBook_text.setBounds(creditBook_label.getX() + LW + LHS, creditBook_label.getY(), TW, TH);
         creditBook_text.addFocusListener(this);
-        textArray.add(creditBook_text);
         creditBook_text.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(save_button != null) {
@@ -186,6 +190,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         });
         add(creditBook_text);
     }
+    /** Метод создания и размещения полей {@link #address_label} и {@link #address_text} */
     private void addressFields(){
         address_label = new JLabel("Адресс");
         address_label.setBounds(creditBook_label.getX(), creditBook_label.getY() + LVS, LW, LH);
@@ -194,7 +199,6 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         address_text = new JTextField();
         address_text.setBounds(address_label.getX() + LW + LHS, address_label.getY(), TW, TH);
         address_text.addFocusListener(this);
-        textArray.add(address_text);
         address_text.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(save_button != null) {
@@ -204,6 +208,8 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         });
         add(address_text);
     }
+
+    /** Метод создания и размещения полей {@link #phoneNumber_label} и {@link #phoneNumber_text} */
     private void phoneNumberFields(){
         phoneNumber_label = new JLabel("Номер тел.");
         phoneNumber_label.setBounds(address_label.getX(), address_label.getY() + LVS, LW, LH);
@@ -221,25 +227,24 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
 
             }
         });
-        textArray.add(phoneNumber_text);
         add(phoneNumber_text);
     }
+    /** Конструктор создания панели GUI */
     public NewStudentPanel() {
 
         setLayout(null);
-
-        image_label = new JLabel();
-        image_label.setIcon(new ImageIcon("src\\icons\\new_employer.png"));
+        //добавляем картинку
+        JLabel image_label = new JLabel();
+        image_label.setIcon(new ImageIcon("src\\icons\\new_student.png"));
         image_label.setBounds(LX + 135, 40, 128, 130);
         add(image_label);
-
-        imageText_label = new JLabel("Новый студент");
+        //Добавляем подпись
+        JLabel imageText_label = new JLabel("Новый студент");
         imageText_label.setBounds(425, 180, 150, 30);
         imageText_label.setFont(new Font("SansSerif", Font.PLAIN, 18));
         add(imageText_label);
 
-        textArray = new ArrayList<JTextField>();
-
+        //вызываем методы создания полей и подписей для ввода данных о студенте
         nameFields();
         surNameFields();
         groupNumberFields();
@@ -248,21 +253,30 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         addressFields();
         phoneNumberFields();
 
+        //создаем кнопку сохранения данных
         save_button = new JButton("Сохнанить");
         save_button.setBounds(phoneNumber_text.getX() + ((TW - BW) / 2), phoneNumber_text.getY() + LH + 20, BW, BH);
-        //save_button.setContentAreaFilled(false);
         save_button.setFocusPainted(false);
         save_button.addActionListener(this);
         add(save_button);
 
     }
 
+    /**
+     * Переопределяем метод оформления полей ввода информации:
+     * добавляем подсветку
+     * @param e the event to be processed
+     */
     @Override
     public void focusGained(FocusEvent e) {
         ((JTextField)e.getSource()).setBorder(new LineBorder(Color.blue));
 
     }
-
+    /**
+     * Переопределяем метод оформления полей ввода информации:
+     * добавляем красную подсветку, если информация не введена
+     * @param e the event to be processed
+     */
     @Override
     public void focusLost(FocusEvent e) {
         Color color = Color.green;
@@ -284,10 +298,15 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
 
     }
 
+    /**
+     * Переопредененный метод для кнопки, по нажатию происходит сохранение данных
+     * пользователя в бд
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
 
-
+        //проверка на воод пустоты или не корректных данных
         if(		name_text.getText().replaceAll("\\s+", "").equals("") ||
                 surname_text.getText().replaceAll("\\s+", "").equals("") ||
                 groupNumber_text.getText().replaceAll("\\s+", "").equals("") ||
@@ -300,6 +319,8 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
                     "Пожалуйста введите информацию корректно\nполя не могут быть пустыми\nПример ввода даты: YYYY-MM-DD", "ОШИБКА", JOptionPane.ERROR_MESSAGE);
 
         } else {
+            //данные введены корректно -> будем сохранять
+            //Для перепроверки данных создаем информационный блок
             String text = "\n  Имя :\t" + name_text.getText().toUpperCase() + "\n\n" +
                             "  Фамилия : \t" + surname_text.getText().toUpperCase() + "\n\n" +
                             "  Номер группы : \t" + groupNumber_text.getText().toUpperCase() + "\n\n" +
@@ -316,7 +337,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
                     }
 
             };
-
+            //выводим информационный блок, чтобы пользователь перепроверил и подтвердил сохранение
             int result = JOptionPane.showOptionDialog(this, pane, "Данные", 1, 1,
                     new ImageIcon("src\\icons\\accounting_icon_1_32.png"), new Object[] {"Сохранить", "Закрыть"}, "Закрыть");
             if (groupService.findByGroupNumber(groupNumber_text.getText()) == null) {
@@ -328,56 +349,58 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
                             }
                         }
                 };
+                //если группы с введённым номером не существует, то её можно создать автоматически
                 int createGroupVal = JOptionPane.showOptionDialog(this, group_error, "Группы с таким номером не существует", 1, 1,
                         new ImageIcon("src\\icons\\accounting_icon_1_32.png"), new Object[]{"Создать","Закрыть"}, "Закрыть");
                 if (createGroupVal == 0){
                     groupService.save(new Group(groupNumber_text.getText()));
                 }
             }
-            // System.out.println(result);
             // 0 -> SAVE
             // 1 -> CANCEL
 
             if(result == 0) {
+                //сохраняем
                 Group gr = groupService.findByGroupNumber(groupNumber_text.getText());
                 Student saveStudent = studentService.save(new Student(name_text.getText().toUpperCase(), surname_text.getText().toUpperCase(),
                         Date.valueOf(dateOfBirth_text.getText()), creditBook_text.getText(), phoneNumber_text.getText().toUpperCase(),
-                        address_text.getText(), false,
-                        gr));
+                        address_text.getText(), false, gr));
                 groupService.addStudent(gr, saveStudent);
-                //System.out.println(groupService.findByGroupNumber(groupNumber_text.getText()));
-                //System.out.println(groupNumber_text.getText());
                 if(saveStudent != null) {
 
                     JOptionPane.showMessageDialog(this, "Сохранено");
                     clearPanel();
-
                 } else {
 
                     JOptionPane.showMessageDialog(this, "Не сохранено", "DATABASE ERROR", JOptionPane.ERROR_MESSAGE);
-
                 }
             }
 
         }
     }
 
-
+    /**
+     * Метод для проверки номера телефона на корректность
+     * @param phoneNumber строка номера телефона
+     * @return true - если номер корректный, иначе - false
+     */
     private boolean phoneNumberControl(String phoneNumber) {
-
-        if(phoneNumber.equals("")) {
+        if(phoneNumber.equals(""))
             return false;
-        } else if( (phoneNumber.charAt(0) == '0' && phoneNumber.length() == 11)
+        if( (phoneNumber.charAt(0) == '0' && phoneNumber.length() == 11)
                 || (phoneNumber.charAt(0) != '0' && phoneNumber.length() == 10)
                 || (phoneNumber.charAt(0) == '+' && phoneNumber.length() == 13)) {
 
             return true;
-
         }
 
         return false;
-
     }
+    /**
+     * Метод для проверки номера даты рождения на корректность
+     * @param dateOfBirth строка даты рождения
+     * @return true - если номер корректный, иначе - false
+     */
     private boolean dateOfBirthControl(String dateOfBirth) {
 
         if(dateOfBirth.equals(""))
@@ -391,6 +414,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
 
     }
 
+    /** Метод очищает заполненные пользователем поля */
     private void clearPanel() {
 
         name_text.setText("");
@@ -408,10 +432,12 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         dateOfBirth_text.setBorder(new LineBorder(Color.white));
         address_text.setBorder(new LineBorder(Color.white));
         creditBook_text.setBorder(new LineBorder(Color.white));
-
     }
 
-
+    /**
+     * Переопределенный метод для возвращения названия панели
+     * @return строковое представление названия
+     */
     @Override
     public String toString() {
         return "Новый студент";

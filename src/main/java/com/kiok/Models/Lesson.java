@@ -1,21 +1,31 @@
 package com.kiok.Models;
 
 import javax.persistence.*;
-import java.util.Objects;
-
+/**
+ * Класс сущность "Урок" связан с таблицей БД
+ * @author Кихтенко О.Ю. 10702120
+ */
 @Entity
 public class Lesson {
+    /** Уникальный идентификатор объекта */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id;
-
+    /** Название предмета */
     private String lessonName;
+    /** Имя преподавателя */
     private String teacherName;
-    private String typeOnSession; //зачет экзамен диф
-    private String amountOfHours;
-    private String typeOfLesson;
 
+    /** Тип экзаменации */
+    private String typeOnSession; //зачет экзамен диф
+
+    /** Количество часов на изучение */
+    private String amountOfHours;
+
+    /** Тип проведения урока (лекция, семминар, практика, лабораторная)*/
+    private String typeOfLesson;
+    /** Группа, у которой этот предмет проводится */
     @ManyToOne ( cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn (name="group_to_lesson_id")
     private Group group;
@@ -23,6 +33,15 @@ public class Lesson {
     public Lesson() {
     }
 
+    /**
+     * Конструктор создания объекта
+     * @param lessonName Название предмета
+     * @param teacherName Имя преподавателя
+     * @param typeOnSession Тип экзаменации
+     * @param amountOfHours Количество часов на изучение
+     * @param typeOfLesson Тип проведения урока (ЛК., СЕМ., ПР., ЛР.)
+     * @param group Группа, у которой этот предмет проводится
+     */
     public Lesson(String lessonName, String teacherName, String typeOnSession, String amountOfHours, String typeOfLesson, Group group) {
         this.lessonName = lessonName;
         this.teacherName = teacherName;
@@ -30,19 +49,6 @@ public class Lesson {
         this.amountOfHours = amountOfHours;
         this.typeOfLesson = typeOfLesson;
         this.group = group;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Lesson lesson = (Lesson) o;
-        return Objects.equals(id, lesson.id) && Objects.equals(lessonName, lesson.lessonName) && Objects.equals(teacherName, lesson.teacherName) && Objects.equals(typeOnSession, lesson.typeOnSession) && Objects.equals(amountOfHours, lesson.amountOfHours) && Objects.equals(typeOfLesson, lesson.typeOfLesson) && Objects.equals(group, lesson.group);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, lessonName, teacherName, typeOnSession, amountOfHours, typeOfLesson, group);
     }
 
     public Long getId() {
