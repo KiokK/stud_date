@@ -200,7 +200,7 @@ public class ViewStudentInfo extends JPanel{
         });
         group_comboBox.setMaximumRowCount(5);//более 5 элементов - появится полоса прокрутки
         add(group_comboBox);
-        JButton refreshBtn = new JButton(new ImageIcon("src\\icons\\btn_refresh.png"));
+        JButton refreshBtn = new JButton(new ImageIcon(getClass().getResource("/icons/btn_refresh.png")));
         refreshBtn.setToolTipText("Обновить списки групп");
         refreshBtn.setBounds(chooseGroup_label.getX() - 46, chooseGroup_label.getY() +
                 chooseGroup_label.getHeight(), 45, 24);

@@ -4,6 +4,9 @@ import com.kiok.Models.Admin;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
 /**
  * Класс взаимодействия с БД таблицы администратора,
  * наследуется от CrudRepository
@@ -13,4 +16,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdminRepos extends CrudRepository<Admin, Long> {
     Admin findByLoginAndPassword(String login, String password);
+    List<Admin> findAll();
 }

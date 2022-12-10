@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -98,5 +99,14 @@ public class GroupService {
         st.remove(student);
         group.setStudentList(st);
         return save(group);
+    }
+
+    /**
+     * Метод удаляет группу студентов
+     * (студенты, состоящие в группе так же будут удалены)
+     * @param groupForDel группа, которую удаляем
+     */
+    public void delete(Group groupForDel) {
+        groupRepos.deleteById(groupForDel.getId());
     }
 }

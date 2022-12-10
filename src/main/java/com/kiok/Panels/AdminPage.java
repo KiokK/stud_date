@@ -71,7 +71,7 @@ public class AdminPage extends JFrame implements ActionListener{
     public AdminPage(int component) {
 
         super("Registration System");
-        setIconImage(Toolkit.getDefaultToolkit().getImage("src\\icons\\admin_user.png"));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/admin_user.png")));
         setSize(W_FRAME, H_FRAME);
         setResizable(false);
         setLayout(null);

@@ -3,6 +3,8 @@ package com.kiok.Models;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * Класс сущность "Группа" связан с таблицей БД
  * @author Кихтенко О.Ю. 10702120
@@ -19,11 +21,11 @@ public class Group {
     private String groupNumber;
 
     /** Список студентов данной группы */
-    @OneToMany( cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
+    @OneToMany( cascade={CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     private List<Student> studentList;
 
     /** Список уроков данной группы */
-    @OneToMany( cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany( cascade={CascadeType.ALL, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     private Set<Lesson> lessons;
 
     /**
@@ -55,6 +57,9 @@ public class Group {
     }
 
     public List<Student> getStudentList() {
+        studentList = studentList.stream().sorted((o1, o2)->o1.getSurname().
+                compareTo(o2.getSurname())).
+                collect(Collectors.toList());
         return studentList;
     }
 

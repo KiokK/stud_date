@@ -1,5 +1,6 @@
 package com.kiok.Panels;
 import com.kiok.MainApp;
+import com.kiok.Models.Admin;
 import com.kiok.Panels.newPanel.NewStudentPanel;
 import com.kiok.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class Login extends JFrame{
     public Login() {
 
         super("Вход");
-        setIconImage(Toolkit.getDefaultToolkit().getImage("src\\icons\\Login_user_24.png"));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/Login_user_24.png")));
         setResizable(false);//изменяемость размера
         setLayout(null);//менеджер расположения чтобы узнать, какой менеджер им используется в данный момент
         setSize(W_FRAME, H_FRAME);
@@ -70,7 +71,6 @@ public class Login extends JFrame{
         insets = this.getInsets();
 
         GUI();//метод создания графического интерфейса
-
     }
 
     /**
@@ -125,7 +125,7 @@ public class Login extends JFrame{
         addLoginButton();
 
         //добавление картинки на панель
-        JLabel label_icon = new JLabel(new ImageIcon("src\\icons\\Login_user_72.png"));
+        JLabel label_icon = new JLabel(new ImageIcon(getClass().getResource("/icons/Login_user_72.png")));
         label_icon.setBounds(textField_username.getX() + 20,
                             textField_username.getY() - 100, 72, 72);
         contentPane.add(label_icon);
@@ -157,6 +157,8 @@ public class Login extends JFrame{
              */
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (adminService.isEmpty() == true)
+                    adminService.save(new Admin("adm", "adm"));
                 //проверяем на пустоту
                 if(textField_username.getText().equals("") ||
                    String.valueOf(passwordField_password.getPassword()).equals("")) {

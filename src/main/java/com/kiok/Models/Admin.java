@@ -17,6 +17,12 @@ public class Admin {
     /** Пароль администратора */
     private String password;
 
+    public Admin(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+    public Admin() { }
+
     public Long getId() {
         return id;
     }

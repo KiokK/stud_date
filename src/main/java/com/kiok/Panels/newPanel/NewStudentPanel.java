@@ -60,7 +60,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
     /**
      * width of the label
      */
-    private final int LW = 95;
+    private final int LW = 115;
 
     /**
      * height of the label
@@ -174,7 +174,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
 
     /** Метод создания и размещения полей {@link #creditBook_label} и {@link #creditBook_text} */
     private void creditBookFields(){
-        creditBook_label = new JLabel("Номер зачетной книги");
+        creditBook_label = new JLabel("№ зачетной книги");
         creditBook_label.setBounds(dateOfBirth_label.getX(), dateOfBirth_label.getY() + LVS, LW, LH);
         add(creditBook_label);
 
@@ -235,7 +235,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
         setLayout(null);
         //добавляем картинку
         JLabel image_label = new JLabel();
-        image_label.setIcon(new ImageIcon("src\\icons\\new_student.png"));
+        image_label.setIcon(new ImageIcon(getClass().getResource("/icons/new_student.png")));
         image_label.setBounds(LX + 135, 40, 128, 130);
         add(image_label);
         //Добавляем подпись
@@ -339,7 +339,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
             };
             //выводим информационный блок, чтобы пользователь перепроверил и подтвердил сохранение
             int result = JOptionPane.showOptionDialog(this, pane, "Данные", 1, 1,
-                    new ImageIcon("src\\icons\\accounting_icon_1_32.png"), new Object[] {"Сохранить", "Закрыть"}, "Закрыть");
+                    new ImageIcon(getClass().getResource("/icons/accounting_icon_1_32.png")), new Object[] {"Сохранить", "Закрыть"}, "Закрыть");
             if (groupService.findByGroupNumber(groupNumber_text.getText()) == null) {
                 Object[] group_error = {
                         new JLabel("Группы с таким номером не существует"),
@@ -351,7 +351,7 @@ public class NewStudentPanel extends JPanel implements FocusListener, ActionList
                 };
                 //если группы с введённым номером не существует, то её можно создать автоматически
                 int createGroupVal = JOptionPane.showOptionDialog(this, group_error, "Группы с таким номером не существует", 1, 1,
-                        new ImageIcon("src\\icons\\accounting_icon_1_32.png"), new Object[]{"Создать","Закрыть"}, "Закрыть");
+                        new ImageIcon(getClass().getResource("/icons/accounting_icon_1_32.png")), new Object[]{"Создать","Закрыть"}, "Закрыть");
                 if (createGroupVal == 0){
                     groupService.save(new Group(groupNumber_text.getText()));
                 }

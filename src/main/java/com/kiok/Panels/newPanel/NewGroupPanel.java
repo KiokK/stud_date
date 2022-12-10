@@ -54,13 +54,15 @@ public class NewGroupPanel extends JPanel implements ActionListener{
     private JTextField number_text;
     /** Кнопка для сохранения данных в бд */
     private JButton save_button;
+    /** Кнопка для узаления данных из бд */
+    private JButton del_button;
 
     /** Конструктор создания панели */
     public NewGroupPanel() {
 
         setLayout(null);
         //Картинка для пользователя
-        JLabel image_label = new JLabel(new ImageIcon("src\\icons\\new_group.png"));
+        JLabel image_label = new JLabel(new ImageIcon(getClass().getResource("/icons/new_group.png")));
         image_label.setBounds(427, 80, 128, 128);
         add(image_label);
 
@@ -80,6 +82,41 @@ public class NewGroupPanel extends JPanel implements ActionListener{
         save_button.setBounds(number_text.getX() + ((TW - BW) / 2), number_text.getY() + LH + 20, BW, BH);
         save_button.setFocusPainted(false);
         add(save_button);
+
+        //создаем кнопку для удаления данных
+        del_button = new JButton("Удалить");
+        del_button.setBounds(0, 0, BW, BH);
+        del_button.addActionListener(new ActionListener() {
+            /**
+             * Метод переопределен для кнопки удаления группы из БД
+             * @param e the event to be processed
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //проверяем есть ли уже группа с таким номером
+                Group thisGroup = groupService.findByGroupNumber(number_text.getText());
+                if (thisGroup != null) {
+                    //получаем результат перепроверки: DELETE = 0, CANCEL = 1
+                    int result = JOptionPane.showOptionDialog(null,
+                            new Object[] {
+                                new JLabel(number_label.getText()),
+                                new JTextField(number_text.getText().toUpperCase()),
+                             }, "Удалить", JOptionPane.OK_OPTION, -1,
+                            new ImageIcon(getClass().getResource("/icons/accounting_icon_1_32.png")),
+                            new Object[] {"Удалить",  "Закрыть"}, "Закрыть");
+
+                    if (result == 1) return;
+                    //удаляем группу
+                    groupService.delete(thisGroup);
+                    JOptionPane.showMessageDialog(null, "Группа удалена!");
+                    clearPanel();
+                }else
+                    JOptionPane.showMessageDialog(null, "Группа с таким номером не существует");
+            }
+        });
+        del_button.setBounds(number_text.getX() + ((TW - BW) / 2), number_text.getY() + LH + 65, BW, BH);
+        del_button.setFocusPainted(false);
+        add(del_button);
     }
 
     /**
@@ -109,7 +146,7 @@ public class NewGroupPanel extends JPanel implements ActionListener{
                 numberText,
         };
         //получаем результат перепроверки: SAVE = 0, CANCEL = 1
-        int result = JOptionPane.showOptionDialog(this, approvalForm, "Сохранить", JOptionPane.OK_OPTION, -1, new ImageIcon("src//icons//accounting_icon_1_32.png"), new Object[] {"Сохранить",  "Закрыть"}, "Закрыть");
+        int result = JOptionPane.showOptionDialog(this, approvalForm, "Сохранить", JOptionPane.OK_OPTION, -1, new ImageIcon(getClass().getResource("/icons/accounting_icon_1_32.png")), new Object[] {"Сохранить",  "Закрыть"}, "Закрыть");
 
         if(result == 0) {
             //сохраняем

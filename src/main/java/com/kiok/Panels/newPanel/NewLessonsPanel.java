@@ -149,6 +149,23 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
         });
         add(group_comboBox);
 
+        JButton refreshBtn = new JButton(new ImageIcon(getClass().getResource("/icons/btn_refresh.png")));
+        refreshBtn.setToolTipText("Обновить списки групп");
+        refreshBtn.setBounds(group_comboBox.getX() - 46, group_comboBox.getY(), 45, 24);
+
+        //для обновления списка групп
+        refreshBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> groupNumbers_arrayList = groupService.findAllNumbers();
+                group_comboBox.setModel(new DefaultComboBoxModel<String>(
+                        groupNumbers_arrayList.toArray(new String[groupNumbers_arrayList.size()])
+                ));
+
+            }
+        });
+        add(refreshBtn);
+
         //создаем подпись для выбранной группы
         JLabel selectionGroup_label = new JLabel("Выбранная группа");
         selectionGroup_label.setBounds(group_label.getX() + LBS, group_label.getY(), LBW, 24);
@@ -300,7 +317,7 @@ public class NewLessonsPanel extends JPanel implements ActionListener, ListSelec
 
                 //окно перепроверки перед сохранением
                 int result = JOptionPane.showOptionDialog(null, pane, "Данные", 1, 1,
-                            new ImageIcon("src\\icons\\accounting_icon_1_32.png"), new Object[] {"Сохранить", "Закрыть"}, "Закрыть");
+                            new ImageIcon(getClass().getResource("/icons/accounting_icon_1_32.png")), new Object[] {"Сохранить", "Закрыть"}, "Закрыть");
 
                 if(result == 0) { // 0 -> SAVE
                     //сохраняем предмет в БД
